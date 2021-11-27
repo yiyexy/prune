@@ -31,8 +31,8 @@ def train(model,device,train_dataloader,optimizer,epochs,dataset_str,log_interva
             optimizer.step()
             total_train_step += 1
 
-            if total_train_step % log_interval == 0:
-                print("训练次数：{}，Loss：{}".format(total_train_step,train_loss))
+            if batch_index % log_interval == 0:
+                print("epoch次数为：{}，在此epoch中的batch数为：{}，Loss：{}".format(i+1,batch_index,train_loss))
                 writer.add_scalar('train_loss',train_loss.item(),total_train_step)
         # for param_group in optimizer.param_groups:
         #     print('当前的学习率为：',param_group['lr'])
