@@ -12,6 +12,7 @@ class MyData(Dataset):
         img_path = self.img_list[index]
         label = self.label_list[index]
         img = Image.open(img_path)
+        # img = img/255.0
         img = self.transform(img)
         return img,label
 
@@ -49,16 +50,17 @@ class MyData(Dataset):
 
 
 
-root_dir = './datasets/cat_dog'
+root_dir = '../datasets/cat_dog'
 transforms = transforms.Compose([
-    transforms.Resize((256,256)),
-    transforms.ToTensor()
+    transforms.Resize((224,224)),
+    transforms.ToTensor(),
+    # transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))
 ])
 train_dataset = MyData(root_dir,True,transforms)
 test_dataset = MyData(root_dir,False,transforms)
 
-train_dataloader = DataLoader(train_dataset,4,True,num_workers=2)
-test_dataloader = DataLoader(test_dataset,4,True,num_workers=2)
+train_dataloader = DataLoader(train_dataset,16,True,num_workers=2)
+test_dataloader = DataLoader(test_dataset,16,True,num_workers=2)
 
 
 

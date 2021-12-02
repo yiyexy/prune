@@ -19,16 +19,17 @@ def train(model,device,train_dataloader,optimizer,epochs,dataset_str,log_interva
             imgs,targets = data
             imgs,targets = imgs.to(device),targets.to(device)
             outputs = model(imgs)
+
+            # 下面两个数据变化都是为了BCELoss服务的
+            # targets = targets.float()
+            # targets = targets.reshape((-1,1))
+            # print('outputs.shape={},targets.shape={}'.format(outputs,targets))
             optimizer.zero_grad()
-            # print('outpurts.shape',outputs.shape)
-            # targets = targets.reshape(-1,1)
-            # batchsize = targets.shape[0]
-            # print('targets.shape',targets.shape)
-            # targets_one_hot = torch.zeros(batchsize,outputs.shape[1]).cuda().scatter(1,targets,1)
-            # targets_one_hot = targets_one_hot.type(torch.LongTensor).cuda()
-            # print('targets_one_hot.shape',targets_one_hot.dtype)
+
             train_loss = torch.nn.CrossEntropyLoss()(outputs,targets).cuda()
-            # train_loss = torch.nn.functional.nll_loss(outputs,targets).cuda()
+            # 与二分类模型中的sigmoid输出相对应的损失函数
+
+            # train_loss = torch.nn.L1Loss()(outputs,targets).cuda()
             train_loss.backward()
             optimizer.step()
             total_train_step += 1
@@ -37,6 +38,9 @@ def train(model,device,train_dataloader,optimizer,epochs,dataset_str,log_interva
                 # for name, parms in model.named_parameters():
                 #     print('-->name:', name, '-->grad_requirs:', parms.requires_grad, ' -->grad_value:', parms.grad)
                 #
+                # for parameters in model.parameters():
+                #     print(parameters)
+                k = model.state_dict()
                 print("epoch次数为：{}，在此epoch中的batch数为：{}，Loss：{}".format(i+1,batch_index,train_loss))
                 writer.add_scalar('train_loss',train_loss.item(),total_train_step)
         # for param_group in optimizer.param_groups:
